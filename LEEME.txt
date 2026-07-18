@@ -1,0 +1,36 @@
+DEFENSA WEB appDoE
+==================
+
+Destino recomendado:
+https://vicmal.github.io/diseno-experimentos/defensa/
+
+Publicación en GitHub:
+1. Abra https://github.com/vicmal/diseno-experimentos
+2. Cree dentro de la rama main una carpeta llamada defensa.
+3. Suba dentro de defensa el archivo index.html y la carpeta assets completa.
+4. Confirme el cambio (Commit changes).
+5. Espere entre uno y tres minutos y abra la dirección indicada arriba.
+
+Controles de la defensa:
+- Flecha derecha, barra espaciadora o Page Down: avanzar.
+- Flecha izquierda o Page Up: retroceder.
+- F: pantalla completa.
+- N: notas del expositor.
+- O: vista general de las 14 escenas.
+- Home / End: primera / última escena.
+- En teléfono o tableta: deslice horizontalmente.
+
+Antes de la defensa:
+- Descargue y conserve esta carpeta en el computador de exposición.
+- Pruebe la página con Chrome o Firefox.
+- Active pantalla completa.
+- Lleve una copia PDF impresa desde la opción Imprimir del navegador.
+- Compruebe que las fuentes y las tres imágenes cargan sin conexión.
+
+Estructura que debe conservarse:
+defensa/
+  index.html
+  assets/
+    campo-evidencia.jpg
+    fisher-archivo.jpg
+    appdoe-futuro.jpg

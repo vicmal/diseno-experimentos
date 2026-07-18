@@ -1,783 +1,117 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diseño y Análisis de Experimentos Agrícolas — Guía de Estudio</title>
-<meta name="description" content="Guía interactiva de estudio sobre diseño y análisis estadístico de experimentos agrícolas. De R. A. Fisher a las aplicaciones Shiny. Material académico para el PTDG de Yenireth Rengel Tocuyo, UDO Monagas 2026.">
-<meta property="og:title" content="Diseño de Experimentos Agrícolas — Guía de Estudio">
-<meta property="og:description" content="De los campos de Rothamsted a las aplicaciones web: todo sobre diseño experimental agrícola. Guía académica interactiva con autoevaluaciones, calculadoras y preparación para defensa de tesis.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://vicmal.github.io/diseno-experimentos/">
-<meta property="og:image" content="https://vicmal.github.io/diseno-experimentos/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="https://vicmal.github.io/diseno-experimentos/">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌱</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{--forest:#1B4332;--forest-light:#2D6A4F;--leaf:#40916C;--leaf-soft:#74C69D;--wheat:#F5E6C8;--cream:#FEFCF6;--soil:#5C4033;--soil-light:#7B5B4C;--ember:#C1440E;--ember-soft:#E76F51;--text:#2C2C2C;--text-muted:#6B6B6B;--border:#E0D5C1;--code-bg:#F0EBE1}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;font-size:17px}
-body{font-family:'Source Sans 3',system-ui,sans-serif;color:var(--text);background:var(--cream);line-height:1.72}
-a.skip-link{position:absolute;top:-40px;left:0;background:var(--forest);color:#fff;padding:.5rem 1rem;z-index:300;font-size:.9rem}
-a.skip-link:focus{top:0}
-.sidebar{position:fixed;top:0;left:0;width:280px;height:100vh;background:var(--forest);color:#fff;overflow-y:auto;z-index:100;padding:2rem 0;transition:transform .3s}
-.sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:1rem}
-.sidebar-logo h2{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;line-height:1.35}
-.sidebar-logo p{font-size:.78rem;opacity:.6;margin-top:.35rem;line-height:1.4}
-.sidebar nav a{display:block;padding:.55rem 1.5rem;color:rgba(255,255,255,.72);text-decoration:none;font-size:.85rem;font-weight:400;transition:all .2s;border-left:3px solid transparent;cursor:pointer}
-.sidebar nav a:hover,.sidebar nav a.active{color:#fff;background:rgba(255,255,255,.07);border-left-color:var(--leaf-soft)}
-.sidebar nav .nav-group{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);padding:1.2rem 1.5rem .4rem;font-weight:600}
-.menu-toggle{display:none;position:fixed;top:1rem;left:1rem;z-index:200;background:var(--forest);color:#fff;border:none;padding:.5rem .75rem;border-radius:6px;font-size:1.3rem;cursor:pointer}
-.main{margin-left:280px;min-height:100vh}
-.hero{background:linear-gradient(135deg,var(--forest) 0%,var(--forest-light) 60%,var(--leaf) 100%);color:#fff;padding:5rem 4rem 4rem;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;right:-80px;bottom:-80px;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,.03)}
-.hero h1{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;line-height:1.15;max-width:700px;margin-bottom:1rem}
-.hero .subtitle{font-size:1.15rem;font-weight:300;opacity:.85;max-width:600px;line-height:1.6}
-.hero .meta{margin-top:2rem;display:flex;gap:2rem;flex-wrap:wrap;font-size:.85rem;opacity:.65}
-.hero .meta span{display:flex;align-items:center;gap:.4rem}
-.section{max-width:820px;margin:0 auto;padding:3.5rem 2.5rem}
-.section+.section{border-top:1px solid var(--border)}
-.section-tag{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--leaf);font-weight:600;margin-bottom:.5rem}
-.section h2{font-family:'Playfair Display',serif;font-size:1.85rem;color:var(--forest);margin-bottom:1rem;line-height:1.25}
-.section h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--soil);margin:2rem 0 .75rem;line-height:1.3}
-.section h4{font-size:1rem;font-weight:600;color:var(--forest-light);margin:1.5rem 0 .5rem}
-.section p{margin-bottom:1rem}
-.cite{color:var(--soil-light);font-size:.92em}
-.highlight{background:var(--wheat);border-left:4px solid var(--ember);padding:1.2rem 1.5rem;margin:1.5rem 0;border-radius:0 8px 8px 0;font-size:.95rem}
-.highlight strong{color:var(--ember)}
-.info-box{background:rgba(64,145,108,.08);border:1px solid rgba(64,145,108,.2);border-radius:8px;padding:1.2rem 1.5rem;margin:1.5rem 0;font-size:.95rem}
-.info-box .label{font-weight:600;color:var(--forest);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem}
-.warn-box{background:rgba(193,68,14,.06);border:1px solid rgba(193,68,14,.18);border-radius:8px;padding:1.2rem 1.5rem;margin:1.5rem 0;font-size:.95rem}
-.warn-box .label{font-weight:600;color:var(--ember);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem}
-.example{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin:1.5rem 0;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-.example .ex-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--forest);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
-.example .ex-title::before{content:'▸';color:var(--ember);font-size:1.2rem}
-.data-table{width:100%;border-collapse:collapse;margin:1rem 0 1.5rem;font-size:.88rem}
-.data-table th{background:var(--forest);color:#fff;padding:.6rem .8rem;text-align:left;font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
-.data-table td{padding:.55rem .8rem;border-bottom:1px solid var(--border)}
-.data-table tr:nth-child(even) td{background:rgba(245,230,200,.3)}
-.data-table code{font-family:'JetBrains Mono',monospace;font-size:.82rem;background:var(--code-bg);padding:.1rem .35rem;border-radius:3px}
-pre{font-family:'JetBrains Mono',monospace;font-size:.82rem;background:var(--forest);color:#d8f3dc;padding:1.2rem 1.5rem;border-radius:8px;overflow-x:auto;margin:1rem 0 1.5rem;line-height:1.6}
-pre .comment{color:#74C69D} pre .keyword{color:#F5E6C8} pre .string{color:#E76F51}
-code{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:var(--code-bg);padding:.15rem .4rem;border-radius:3px}
-.formula{text-align:center;padding:1.2rem;margin:1rem 0;font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--forest);background:rgba(245,230,200,.4);border-radius:8px;font-style:italic}
-.timeline{position:relative;padding-left:2.5rem;margin:1.5rem 0}
-.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--leaf),var(--ember))}
-.timeline-item{position:relative;margin-bottom:1.8rem}
-.timeline-item::before{content:'';position:absolute;left:-2.5rem;top:.45rem;width:12px;height:12px;border-radius:50%;background:var(--leaf);border:2px solid var(--cream)}
-.timeline-item .year{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--ember);font-weight:500}
-.timeline-item h4{font-size:.95rem;color:var(--forest);margin:.15rem 0 .3rem}
-.timeline-item p{font-size:.9rem;color:var(--text-muted);margin:0}
-.software-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem;margin:1.5rem 0}
-.sw-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.2rem;transition:box-shadow .2s,transform .2s}
-.sw-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);transform:translateY(-2px)}
-.sw-card h4{font-family:'Playfair Display',serif;font-size:1rem;color:var(--forest);margin:0 0 .3rem}
-.sw-card .sw-type{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--leaf);font-weight:600}
-.sw-card p{font-size:.85rem;color:var(--text-muted);margin-top:.5rem}
-.tags{display:flex;gap:.4rem;flex-wrap:wrap;margin:.5rem 0}
-.tag{font-size:.72rem;padding:.2rem .6rem;border-radius:20px;font-weight:500}
-.tag-green{background:rgba(64,145,108,.12);color:var(--leaf)}
-.tag-orange{background:rgba(193,68,14,.1);color:var(--ember)}
-.tag-brown{background:rgba(92,64,51,.1);color:var(--soil)}
-.checklist{list-style:none;margin:1rem 0}
-.checklist li{padding:.4rem 0 .4rem 1.8rem;position:relative;font-size:.95rem}
-.checklist li::before{content:'☐';position:absolute;left:0;color:var(--leaf);font-size:1.1rem}
-.accordion-item{border:1px solid var(--border);border-radius:8px;margin:.5rem 0;overflow:hidden}
-.accordion-header{padding:.8rem 1.2rem;background:rgba(245,230,200,.3);cursor:pointer;font-weight:600;font-size:.95rem;color:var(--forest);display:flex;justify-content:space-between;align-items:center;user-select:none;border:none;width:100%;text-align:left;font-family:inherit}
-.accordion-header::after{content:'▾';color:var(--leaf);transition:transform .2s}
-.accordion-header[aria-expanded="true"]::after{transform:rotate(180deg)}
-.accordion-body{padding:0 1.2rem;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}
-.accordion-body.open{max-height:5000px;padding:1rem 1.2rem}
-.quiz-container{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin:1rem 0}
-.quiz-q{font-weight:600;color:var(--forest);margin-bottom:.75rem;font-size:.95rem}
-.quiz-options label{display:block;padding:.45rem .8rem;margin:.3rem 0;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .15s}
-.quiz-options label:hover{background:rgba(64,145,108,.06)}
-.quiz-options input{margin-right:.5rem}
-.quiz-options label.correct{background:rgba(64,145,108,.15);border-color:var(--leaf)}
-.quiz-options label.incorrect{background:rgba(193,68,14,.1);border-color:var(--ember-soft)}
-.quiz-feedback{margin-top:.75rem;padding:.8rem 1rem;border-radius:6px;font-size:.9rem;display:none}
-.quiz-feedback.show{display:block}
-.quiz-feedback.right{background:rgba(64,145,108,.1);color:var(--forest)}
-.quiz-feedback.wrong{background:rgba(193,68,14,.08);color:var(--soil)}
-.quiz-btn{background:var(--forest);color:#fff;border:none;padding:.45rem 1.2rem;border-radius:6px;cursor:pointer;font-size:.85rem;margin-top:.5rem;font-family:inherit}
-.quiz-btn:hover{background:var(--forest-light)}
-.quiz-score{text-align:center;padding:1.5rem;background:rgba(64,145,108,.08);border-radius:10px;margin:1rem 0}
-.quiz-score .big{font-size:2.5rem;font-weight:700;color:var(--forest);font-family:'Playfair Display',serif}
-.calc-box{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin:1rem 0}
-.calc-box label{display:block;font-size:.9rem;font-weight:500;color:var(--forest);margin:.5rem 0 .25rem}
-.calc-box input[type=number],.calc-box select{width:100%;padding:.4rem .6rem;border:1px solid var(--border);border-radius:6px;font-size:.9rem;font-family:inherit}
-.calc-result{margin-top:1rem;padding:.8rem 1rem;background:rgba(245,230,200,.5);border-radius:6px;font-size:.9rem;font-weight:500;color:var(--forest)}
-.roadmap-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.88rem}
-.roadmap-table th{background:var(--forest);color:#fff;padding:.6rem .8rem;text-align:left;font-size:.8rem}
-.roadmap-table td{padding:.55rem .8rem;border-bottom:1px solid var(--border);vertical-align:top}
-.roadmap-table tr:nth-child(even) td{background:rgba(245,230,200,.2)}
-.roadmap-table td:first-child{font-weight:600;color:var(--forest);white-space:nowrap}
-.footer{background:var(--forest);color:rgba(255,255,255,.6);padding:2.5rem;margin-left:280px;text-align:center;font-size:.85rem}
-.footer strong{color:var(--leaf-soft)}
-@media(max-width:900px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.menu-toggle{display:block}.main,.footer{margin-left:0}.hero{padding:4rem 1.5rem 3rem}.hero h1{font-size:2rem}.section{padding:2.5rem 1.5rem}.software-grid{grid-template-columns:1fr}}
-@media print{.sidebar,.menu-toggle{display:none}.main,.footer{margin-left:0}.hero{padding:2rem}pre{white-space:pre-wrap}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="Defensa del Proyecto de Trabajo de Grado: herramienta web para diseño y análisis estadístico de experimentos agrícolas.">
+  <meta name="theme-color" content="#062b24">
+  <meta property="og:title" content="Defensa appDoE · Yenireth Rengel">
+  <meta property="og:description" content="Del experimento agrícola a la evidencia confiable.">
+  <title>Defensa appDoE · Proyecto de Yenireth Rengel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--forest:#062b24;--deep:#031c18;--cream:#f3e8cf;--gold:#d9a83e;--lime:#b9e769;--copper:#c77c4c;--sage:#a8b7ab;--ink:#101813;--paper:#f7f1e4;--danger:#e7825f;--progress:7.14%}
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--deep);font-family:Manrope,system-ui,sans-serif;color:var(--cream)}button{font:inherit}button:focus-visible,a:focus-visible{outline:3px solid var(--lime);outline-offset:4px}.deck{position:relative;width:100%;height:100%;isolation:isolate}.deck:before{content:"";position:fixed;z-index:50;top:0;left:0;width:var(--progress);height:3px;background:linear-gradient(90deg,var(--gold),var(--lime));transition:width .6s ease}.slide{position:absolute;inset:0;padding:clamp(44px,5vw,88px);display:grid;opacity:0;visibility:hidden;transform:translateX(3%);transition:opacity .55s ease,transform .55s ease,visibility .55s;overflow:hidden}.slide.active{opacity:1;visibility:visible;transform:none}.slide:after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 70% 20%,rgba(217,168,62,.1),transparent 30%),linear-gradient(135deg,#062b24,#031c18 70%)}.bg{background-size:cover;background-position:center}.bg:after{background:linear-gradient(90deg,rgba(3,28,24,.98) 0%,rgba(3,28,24,.88) 35%,rgba(3,28,24,.34) 64%,rgba(3,28,24,.06) 100%)}.bg-field{background-image:url('assets/campo-evidencia.jpg')}.bg-history{background-image:url('assets/fisher-archivo.jpg')}.bg-tech{background-image:url('assets/appdoe-futuro.jpg')}.bg-tech:after{background:linear-gradient(90deg,rgba(2,15,14,.98),rgba(2,15,14,.86) 39%,rgba(2,15,14,.14) 70%)}.eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:clamp(11px,.9vw,15px);color:var(--gold);font-weight:700}.slide h1,.slide h2,.slide h3{font-family:"Cormorant Garamond",Georgia,serif;margin:0}.slide h1{font-size:clamp(54px,6.2vw,104px);line-height:.88;font-weight:600;letter-spacing:-.035em;max-width:900px}.slide h2{font-size:clamp(46px,5.2vw,84px);line-height:.94;font-weight:600;max-width:1020px}.slide h3{font-size:clamp(26px,2.4vw,42px);line-height:1}.accent{color:var(--gold)}.lime{color:var(--lime)}.lead{font-size:clamp(17px,1.45vw,25px);line-height:1.55;color:#e9e1d1;max-width:780px}.tiny{font-size:12px;color:var(--sage)}.scene{align-self:center;max-width:1160px}.hero-scene{align-self:center;display:grid;gap:26px;width:50%;min-width:620px}.hero-scene .lead{max-width:650px}.identity{display:grid;gap:8px;margin-top:6px;font-size:clamp(14px,1.05vw,18px)}.cta{width:max-content;border:1px solid var(--gold);border-radius:8px;padding:15px 22px;background:rgba(3,28,24,.35);color:var(--cream);cursor:pointer;display:flex;gap:45px;align-items:center;transition:.25s}.cta:hover{background:var(--gold);color:var(--deep);transform:translateY(-2px)}.counter{position:fixed;right:32px;bottom:25px;z-index:70;font-family:"Cormorant Garamond";font-size:24px;color:var(--gold)}.counter small{color:var(--cream);font-size:15px}.controls{position:fixed;z-index:80;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:6px;opacity:.2;transition:.25s}.controls:hover{opacity:1}.controls button,.utility button{border:1px solid rgba(243,232,207,.25);background:rgba(3,28,24,.75);color:var(--cream);border-radius:50%;width:38px;height:38px;cursor:pointer;backdrop-filter:blur(8px)}.utility{position:fixed;right:26px;top:22px;z-index:80;display:flex;gap:7px;opacity:.35}.utility:hover{opacity:1}.utility button{border-radius:8px;width:auto;padding:0 12px}.hint{position:fixed;z-index:90;left:50%;bottom:70px;transform:translateX(-50%);background:rgba(3,28,24,.86);border:1px solid rgba(217,168,62,.35);padding:8px 14px;border-radius:20px;font-size:11px;color:var(--sage);animation:hint 5s forwards}@keyframes hint{0%,75%{opacity:1}100%{opacity:0;visibility:hidden}}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,72px);align-items:center}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.stat{font-family:"Cormorant Garamond";font-size:clamp(78px,10vw,170px);line-height:.75;color:var(--gold)}.stat-label{font-size:clamp(17px,1.4vw,23px);max-width:450px}.quote{border-left:2px solid var(--gold);padding-left:28px;font:500 clamp(25px,2.7vw,48px)/1.1 "Cormorant Garamond";max-width:870px}.glass{background:rgba(16,42,34,.57);border:1px solid rgba(185,231,105,.24);border-radius:22px;padding:clamp(20px,2vw,34px);backdrop-filter:blur(14px);box-shadow:0 26px 80px rgba(0,0,0,.28)}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}.card{padding:22px;border:1px solid rgba(243,232,207,.16);border-radius:15px;background:rgba(255,255,255,.045);min-height:145px;transition:.25s}.card:hover,.card.focus{transform:translateY(-5px);border-color:var(--gold);background:rgba(217,168,62,.09)}.card b{display:block;color:var(--gold);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}.card p{margin:0;color:#d8d5ca;font-size:14px;line-height:1.5}.objective-list{display:grid;gap:14px;margin-top:28px}.objective{display:grid;grid-template-columns:60px 1fr;gap:18px;align-items:center;padding:16px 20px;border-left:2px solid var(--gold);background:linear-gradient(90deg,rgba(217,168,62,.11),transparent)}.objective span{font:32px "Cormorant Garamond";color:var(--gold)}.objective p{margin:0;font-size:clamp(14px,1.1vw,19px)}.principles{display:flex;gap:22px;margin-top:36px}.principle{flex:1;position:relative;padding:28px 20px;background:rgba(3,28,24,.72);border:1px solid rgba(217,168,62,.3);min-height:210px}.principle i{font-style:normal;font:62px "Cormorant Garamond";color:rgba(217,168,62,.35)}.principle h3{color:var(--gold);margin:5px 0 12px}.principle p{font-size:14px;color:#d8d5ca}.matrix{display:grid;grid-template-columns:1.15fr repeat(5,1fr);font-size:12px;margin-top:24px;border:1px solid rgba(243,232,207,.15);border-radius:12px;overflow:hidden}.matrix>*{padding:11px 8px;border-right:1px solid rgba(243,232,207,.08);border-bottom:1px solid rgba(243,232,207,.08);text-align:center}.matrix b{text-align:left;color:var(--cream)}.matrix .head{background:rgba(217,168,62,.16);color:var(--gold);font-weight:700}.yes{color:var(--lime)}.partial{color:var(--gold)}.no{color:#a99f91}.pipeline{display:grid;grid-template-columns:repeat(7,1fr);align-items:center;margin-top:44px}.pipe{position:relative;text-align:center}.pipe:after{content:"";position:absolute;top:25px;left:60%;width:80%;height:1px;background:linear-gradient(90deg,var(--gold),rgba(217,168,62,.2))}.pipe:last-child:after{display:none}.pipe strong{display:grid;place-items:center;width:52px;height:52px;margin:auto;border:1px solid var(--gold);border-radius:50%;background:var(--deep);color:var(--gold);font:24px "Cormorant Garamond"}.pipe span{display:block;margin-top:12px;font-size:11px;color:#ddd4c5}.modules{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}.module{border:1px solid rgba(185,231,105,.18);border-radius:14px;padding:17px;background:rgba(11,35,29,.72);cursor:pointer;min-height:125px;transition:.25s}.module:hover,.module.open{border-color:var(--lime);background:rgba(185,231,105,.1);transform:scale(1.025)}.module b{color:var(--lime);font-size:12px;text-transform:uppercase;letter-spacing:.1em}.module h3{font:600 18px Manrope;margin:9px 0 0;color:var(--cream)}.module p{font-size:12px;color:var(--sage);margin:8px 0 0;display:none}.module.open p{display:block}.phase-line{display:grid;grid-template-columns:repeat(4,1fr);margin-top:52px;position:relative}.phase-line:before{content:"";position:absolute;top:31px;left:10%;right:10%;height:2px;background:linear-gradient(90deg,var(--gold),var(--lime))}.phase{z-index:1;text-align:center;padding:0 10px}.phase i{display:grid;place-items:center;margin:auto;width:64px;height:64px;border-radius:50%;background:var(--forest);border:2px solid var(--gold);font-style:normal;font:27px "Cormorant Garamond"}.phase h3{font:600 17px Manrope;margin:18px 0 7px}.phase p{font-size:12px;color:var(--sage);margin:0}.validation{display:grid;grid-template-columns:1fr 100px 1fr;align-items:center;gap:26px;margin-top:35px}.validation .source{padding:25px;border-radius:16px;background:rgba(255,255,255,.055);border:1px solid rgba(243,232,207,.16)}.validation .source h3{font:600 20px Manrope}.equal{display:grid;place-items:center;font-size:56px;color:var(--lime)}.match{font:clamp(64px,8vw,125px) "Cormorant Garamond";color:var(--lime);line-height:.8}.likert{display:flex;gap:12px;margin-top:35px}.likert span{flex:1;padding:24px 12px;text-align:center;border:1px solid rgba(243,232,207,.16);border-radius:10px;background:rgba(255,255,255,.04)}.likert span:nth-child(5){border-color:var(--lime);box-shadow:0 0 35px rgba(185,231,105,.1)}.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:40px}.month{text-align:center}.month b{display:block;padding:10px;background:rgba(217,168,62,.13);color:var(--gold)}.month div{height:180px;margin-top:6px;display:flex;flex-direction:column;justify-content:flex-end;gap:5px}.month span{display:block;padding:7px 5px;border-radius:5px;background:rgba(185,231,105,.13);font-size:10px}.budget{font:clamp(62px,8vw,125px) "Cormorant Garamond";color:var(--gold)}.risk{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:32px}.risk div{padding:22px;border-top:2px solid var(--copper);background:rgba(199,124,76,.08)}.risk b{color:var(--copper)}.closing{align-self:center;max-width:820px}.closing h2{font-size:clamp(64px,7vw,118px)}.closing p{font-size:clamp(17px,1.5vw,25px);max-width:650px}.source-note{position:absolute;left:clamp(44px,5vw,88px);bottom:22px;color:rgba(243,232,207,.48);font-size:10px}.speaker{position:fixed;z-index:120;right:18px;top:70px;width:min(460px,88vw);max-height:75vh;overflow:auto;padding:22px;border:1px solid rgba(185,231,105,.35);border-radius:15px;background:rgba(3,28,24,.96);box-shadow:0 24px 80px rgba(0,0,0,.55);display:none}.speaker.open{display:block}.speaker h3{margin:0 0 10px;font:28px "Cormorant Garamond";color:var(--gold)}.speaker p{font-size:13px;line-height:1.6;color:#ddd4c5}.speaker .time{color:var(--lime);font-weight:700}.overview{position:fixed;inset:0;z-index:110;background:#031c18;padding:30px;display:none;grid-template-columns:repeat(4,1fr);gap:12px;overflow:auto}.overview.open{display:grid}.thumb{border:1px solid rgba(243,232,207,.18);border-radius:10px;padding:15px;background:#062b24;color:var(--cream);cursor:pointer;text-align:left;min-height:140px}.thumb:hover{border-color:var(--gold)}.thumb b{color:var(--gold)}.thumb span{display:block;margin-top:12px;font:22px "Cormorant Garamond"}.brand{position:absolute;left:clamp(44px,5vw,88px);top:28px;z-index:2;font-weight:700;font-size:22px}.brand em{font-style:normal;color:var(--gold)}
+    .active .reveal{animation:rise .7s both}.active .reveal:nth-child(2){animation-delay:.12s}.active .reveal:nth-child(3){animation-delay:.24s}.active .reveal:nth-child(4){animation-delay:.36s}@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+    @media(max-width:850px){.slide{padding:68px 22px 55px;overflow:auto}.hero-scene{width:100%;min-width:0}.slide h1{font-size:52px}.slide h2{font-size:44px}.grid2,.grid3{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.principles{flex-direction:column}.matrix{min-width:700px}.modules{grid-template-columns:1fr 1fr}.pipeline{grid-template-columns:repeat(2,1fr);gap:18px}.pipe:after{display:none}.phase-line{grid-template-columns:1fr 1fr;gap:20px}.phase-line:before{display:none}.validation{grid-template-columns:1fr}.equal{height:40px}.timeline{grid-template-columns:1fr 1fr}.month div{height:auto}.risk{grid-template-columns:1fr}.controls{display:none}.utility{top:12px;right:12px}.counter{right:16px}.source-note{position:static;margin-top:20px}.overview{grid-template-columns:1fr 1fr}}
+    @media print{html,body{overflow:visible;background:white}.slide{position:relative;display:grid!important;opacity:1!important;visibility:visible!important;transform:none!important;page-break-after:always;width:100vw;height:56.25vw;min-height:7.5in}.controls,.utility,.counter,.hint,.speaker,.overview{display:none!important}.deck:before{display:none}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
 </head>
 <body>
+<main class="deck" id="deck">
+  <div class="brand">app<em>DoE</em></div>
 
-<a class="skip-link" href="#contenido">Saltar al contenido</a>
-
-<button class="menu-toggle" aria-label="Abrir menú de navegación" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
-
-<aside class="sidebar" role="navigation" aria-label="Navegación principal">
-  <div class="sidebar-logo">
-    <h2>Diseño de Experimentos Agrícolas</h2>
-    <p>Guía de estudio · PTDG Rengel 2026</p>
-  </div>
-  <nav>
-    <div class="nav-group">Ruta de dominio</div>
-    <a data-target="ruta">Mapa de módulos</a>
-    <div class="nav-group">Fundamentos</div>
-    <a data-target="historia">1. Historia y orígenes</a>
-    <a data-target="principios">2. Principios fundamentales</a>
-    <a data-target="disenos">3. Diseños experimentales</a>
-    <div class="nav-group">Análisis</div>
-    <a data-target="aeda">4. Análisis exploratorio</a>
-    <a data-target="supuestos">5. Validación de supuestos</a>
-    <a data-target="anava">6. Inferencia (ANAVA)</a>
-    <a data-target="nopar">7. Pruebas no paramétricas</a>
-    <a data-target="comparacion">8. Comparación de medias</a>
-    <div class="nav-group">Tecnología</div>
-    <a data-target="r-shiny">R y Shiny</a>
-    <a data-target="tanaka">Paquetes R para DoE</a>
-    <a data-target="software">Software existente</a>
-    <a data-target="herramienta">La herramienta propuesta</a>
-    <div class="nav-group">Preparación</div>
-    <a data-target="errores">Errores a evitar</a>
-    <a data-target="defensa">Preguntas del jurado</a>
-    <a data-target="autoevaluacion">Autoevaluación</a>
-    <a data-target="calculadoras">Calculadoras</a>
-    <a data-target="referencias">Referencias</a>
-  </nav>
-</aside>
-
-<div class="main" id="contenido">
-
-<header class="hero">
-  <h1>Diseño y Análisis Estadístico de Experimentos Agrícolas</h1>
-  <p class="subtitle">De los campos de trigo de Rothamsted a las aplicaciones web modernas: domina el diseño, análisis e interpretación de experimentos agrícolas.</p>
-  <div class="meta">
-    <span>📘 Guía de estudio v2</span>
-    <span>🎓 PTDG — Br. Yenireth Rengel Tocuyo</span>
-    <span>🏛 UDO Núcleo de Monagas, 2026</span>
-  </div>
-</header>
-
-<!-- ═══ RUTA DE DOMINIO ═══ -->
-<section class="section" id="ruta">
-  <div class="section-tag">Ruta de dominio</div>
-  <h2>Mapa de módulos de estudio</h2>
-  <p>Cada módulo define qué debes aprender, qué debes poder explicar oralmente y qué preguntas del jurado pueden surgir.</p>
-  <table class="roadmap-table">
-    <tr><th>Módulo</th><th>Resultado esperado</th><th>Debes poder explicar</th></tr>
-    <tr><td>1. Historia</td><td>Explicar el origen agrícola del diseño experimental</td><td>Quién fue Fisher, qué hizo en Rothamsted, por qué importa</td></tr>
-    <tr><td>2. Principios</td><td>Defender aleatorización, repetición y bloqueo</td><td>Por qué la aleatorización valida la prueba F</td></tr>
-    <tr><td>3. Diseños</td><td>Seleccionar DCA, DBCA o factorial según el contexto</td><td>Modelo lineal, GL y tabla ANAVA de cada diseño</td></tr>
-    <tr><td>4. AEDA</td><td>Detectar patrones, errores y atípicos antes de inferir</td><td>Qué estadísticos calcular y qué gráficos usar</td></tr>
-    <tr><td>5. Supuestos</td><td>Interpretar los diagnósticos correctamente</td><td>Qué significa p&gt;0.05 en Shapiro-Wilk (y qué no significa)</td></tr>
-    <tr><td>6. Inferencia</td><td>Explicar ANAVA y rutas alternativas</td><td>Qué dice y qué no dice un F significativo</td></tr>
-    <tr><td>7. Tecnología</td><td>Relacionar R, Shiny, paquetes y el estado del arte</td><td>Por qué Shiny y no otra tecnología</td></tr>
-    <tr><td>8. Defensa</td><td>Argumentar contribución, alcance y validación</td><td>Qué brecha llena la herramienta y cómo se validó</td></tr>
-  </table>
-</section>
-
-<!-- ═══ HISTORIA ═══ -->
-<section class="section" id="historia">
-  <div class="section-tag">Módulo 1</div>
-  <h2>Historia y orígenes del diseño experimental</h2>
-  <p>El diseño de experimentos no nació en un aula de estadística: nació en un campo de cultivo. Todo comenzó cuando un joven matemático inglés se enfrentó al problema práctico de evaluar fertilizantes sin que las diferencias naturales del suelo arruinaran las conclusiones.</p>
-
-  <div class="timeline">
-    <div class="timeline-item"><span class="year">1843</span>
-      <h4>Fundación de Rothamsted</h4>
-      <p>John Bennet Lawes establece la Rothamsted Experimental Station en Harpenden, Inglaterra. Los primeros experimentos de campo carecían de aleatorización formal <span class="cite">(Kuehl, 2001)</span>.</p></div>
-    <div class="timeline-item"><span class="year">1919</span>
-      <h4>Fisher llega a Rothamsted</h4>
-      <p>Ronald Aylmer Fisher (1890–1962) es contratado como estadístico. Hereda décadas de datos agrícolas sin métodos adecuados de análisis <span class="cite">(Steel et al., 1997)</span>.</p></div>
-    <div class="timeline-item"><span class="year">1925</span>
-      <h4><em>Statistical Methods for Research Workers</em></h4>
-      <p>Fisher publica su obra seminal con el ANOVA, las distribuciones F y los fundamentos de la inferencia estadística <span class="cite">(Fisher, 1925)</span>.</p></div>
-    <div class="timeline-item"><span class="year">1935</span>
-      <h4><em>The Design of Experiments</em></h4>
-      <p>Fisher sistematizó la aleatorización, la repetición y el control local como fundamentos del diseño experimental, formalizando DCA, DBCA, cuadrados latinos y factoriales <span class="cite">(Fisher, 1935; Kuehl, 2001)</span>.</p></div>
-    <div class="timeline-item"><span class="year">1949–1977</span>
-      <h4>Contribuciones de Tukey</h4>
-      <p>Tukey desarrolló la prueba HSD para comparación múltiple (1949), la prueba de no aditividad con un grado de libertad (1949) y fundó el Análisis Exploratorio de Datos (1977) <span class="cite">(Tukey, 1949; Tukey, 1977)</span>.</p></div>
-    <div class="timeline-item"><span class="year">1955</span>
-      <h4>Prueba de Duncan</h4>
-      <p>David B. Duncan propone su prueba de rango múltiple, que ofrece mayor potencia para detectar diferencias pero con menor control del error familywise que Tukey <span class="cite">(De Mendiburu y Yaseen, 2020)</span>.</p></div>
-    <div class="timeline-item"><span class="year">1984</span>
-      <h4>Gómez &amp; Gómez</h4>
-      <p>Se publica <em>Statistical Procedures for Agricultural Research</em>, referencia estándar para experimentación agrícola tropical <span class="cite">(Gómez y Gómez, 1984)</span>.</p></div>
-    <div class="timeline-item"><span class="year">1993–2025</span>
-      <h4>La revolución computacional</h4>
-      <p>R (1993), InfoStat (2002), agricolae (2005), Shiny (2012), FielDHub (2021), grapesAgri1 (2021), Mr.Bean (2024), AgroR (2025). La estadística experimental migra del papel al código y del escritorio a la web <span class="cite">(Tanaka y Amaliah, 2025; Shimizu et al., 2025)</span>.</p></div>
-  </div>
-</section>
-
-<!-- ═══ PRINCIPIOS ═══ -->
-<section class="section" id="principios">
-  <div class="section-tag">Módulo 2</div>
-  <h2>Principios fundamentales de la experimentación</h2>
-  <p>Todo diseño experimental válido descansa sobre tres principios introducidos por Fisher <span class="cite">(Fisher, 1935; Montgomery, 2020)</span>.</p>
-
-  <h3>1. Aleatorización</h3>
-  <p>Es la asignación de tratamientos a unidades experimentales mediante un mecanismo de azar. Garantiza que cada tratamiento tenga igual probabilidad de ser asignado a cualquier unidad <span class="cite">(Steel et al., 1997)</span>.</p>
-  <div class="info-box">
-    <div class="label">¿Por qué importa?</div>
-    La aleatorización es condición necesaria para que el estadístico F tenga distribución conocida bajo H₀. Sin ella, las probabilidades calculadas carecen de sustento. Pero la distribución F también depende del cumplimiento de los supuestos del modelo lineal (normalidad, homocedasticidad, independencia); la aleatorización por sí sola no basta <span class="cite">(Montgomery, 2020)</span>.
-  </div>
-
-  <h3>2. Repetición</h3>
-  <p>Consiste en aplicar cada tratamiento a más de una unidad experimental, permitiendo estimar el error experimental <span class="cite">(Kuehl, 2001)</span>.</p>
-  <div class="formula">σ²<sub>x̄</sub> = σ² / r</div>
-  <p>A mayor número de repeticiones (<em>r</em>), menor la varianza de la media estimada.</p>
-
-  <div class="warn-box">
-    <div class="label">No confundir repetición con submuestreo</div>
-    Si se toman 5 muestras de la misma parcela, eso son submuestras, no repeticiones. Las repeticiones son unidades experimentales independientes que recibieron el mismo tratamiento <span class="cite">(Gómez y Gómez, 1984)</span>.
-  </div>
-
-  <h3>3. Control local (bloqueo)</h3>
-  <p>Cuando existe una fuente de variación conocida, se agrupan las unidades en bloques homogéneos. El bloque no es un tratamiento: es un dispositivo para reducir el error experimental <span class="cite">(Gómez y Gómez, 1984)</span>.</p>
-</section>
-
-<!-- ═══ DISEÑOS ═══ -->
-<section class="section" id="disenos">
-  <div class="section-tag">Módulo 3</div>
-  <h2>Diseños experimentales clásicos</h2>
-
-  <h3>Diseño Completamente Aleatorizado (DCA)</h3>
-  <p>Se usa cuando las unidades experimentales son homogéneas y no hay fuentes conocidas de variación que justifiquen bloquear <span class="cite">(Steel et al., 1997)</span>.</p>
-  <div class="formula">Y<sub>ij</sub> = μ + τ<sub>i</sub> + ε<sub>ij</sub></div>
-  <table class="data-table">
-    <tr><th>Fuente de variación</th><th>GL</th><th>SC</th><th>CM</th><th>F</th></tr>
-    <tr><td>Tratamientos</td><td>t − 1</td><td>SC<sub>Trat</sub></td><td>CM<sub>Trat</sub></td><td>CM<sub>Trat</sub> / CM<sub>Error</sub></td></tr>
-    <tr><td>Error</td><td>t(r − 1)</td><td>SC<sub>Error</sub></td><td>CM<sub>Error</sub></td><td></td></tr>
-    <tr><td>Total</td><td>tr − 1</td><td>SC<sub>Total</sub></td><td></td><td></td></tr>
-  </table>
-
-  <div class="example">
-    <div class="ex-title">Ejemplo desarrollado: 4 variedades de maíz (DCA)</div>
-    <p>Se evaluaron 4 variedades con 5 repeticiones. Rendimientos (t/ha):</p>
-    <table class="data-table">
-      <tr><th>Rep</th><th>V1</th><th>V2</th><th>V3</th><th>V4</th></tr>
-      <tr><td>1</td><td>3.2</td><td>4.1</td><td>2.8</td><td>3.9</td></tr>
-      <tr><td>2</td><td>3.5</td><td>3.8</td><td>3.0</td><td>4.2</td></tr>
-      <tr><td>3</td><td>3.1</td><td>4.3</td><td>2.6</td><td>3.7</td></tr>
-      <tr><td>4</td><td>3.4</td><td>4.0</td><td>2.9</td><td>4.1</td></tr>
-      <tr><td>5</td><td>3.3</td><td>4.2</td><td>2.7</td><td>3.8</td></tr>
-    </table>
-    <p><strong>Conclusión:</strong> F<sub>calc</sub> = 58.35 ≫ F<sub>0.05, 3, 16</sub> = 3.24. Existen diferencias altamente significativas entre variedades.</p>
-    <pre><span class="comment"># ANAVA en R</span>
-rendimiento &lt;- c(3.2,3.5,3.1,3.4,3.3, 4.1,3.8,4.3,4.0,4.2,
-                 2.8,3.0,2.6,2.9,2.7, 3.9,4.2,3.7,4.1,3.8)
-variedad &lt;- <span class="keyword">factor</span>(<span class="keyword">rep</span>(c(<span class="string">"V1"</span>,<span class="string">"V2"</span>,<span class="string">"V3"</span>,<span class="string">"V4"</span>), each=5))
-modelo &lt;- <span class="keyword">aov</span>(rendimiento ~ variedad)
-<span class="keyword">summary</span>(modelo)</pre>
-  </div>
-
-  <h3>Diseño de Bloques Completos al Azar (DBCA)</h3>
-  <div class="formula">Y<sub>ij</sub> = μ + τ<sub>i</sub> + β<sub>j</sub> + ε<sub>ij</sub></div>
-  <p>Se usa cuando existe una fuente de variación conocida y controlable <span class="cite">(Gómez y Gómez, 1984)</span>.</p>
-  <table class="data-table">
-    <tr><th>Fuente de variación</th><th>GL</th></tr>
-    <tr><td>Bloques</td><td>b − 1</td></tr>
-    <tr><td>Tratamientos</td><td>t − 1</td></tr>
-    <tr><td>Error</td><td>(b−1)(t−1)</td></tr>
-    <tr><td>Total</td><td>bt − 1</td></tr>
-  </table>
-
-  <h3>Diseño Factorial</h3>
-  <div class="formula">Y<sub>ijk</sub> = μ + α<sub>i</sub> + β<sub>j</sub> + (αβ)<sub>ij</sub> + ε<sub>ijk</sub></div>
-  <div class="highlight">
-    <strong>Concepto clave:</strong> Si la interacción (αβ)<sub>ij</sub> es significativa, no tiene sentido interpretar los efectos principales de forma aislada. La respuesta de un factor depende del nivel del otro <span class="cite">(Montgomery, 2020)</span>.
-  </div>
-</section>
-
-<!-- ═══ AEDA ═══ -->
-<section class="section" id="aeda">
-  <div class="section-tag">Módulo 4</div>
-  <h2>Análisis Exploratorio de Datos (AEDA)</h2>
-  <p>Antes de aplicar cualquier prueba inferencial es imprescindible explorar los datos. El AEDA, conceptualizado por Tukey <span class="cite">(Tukey, 1977)</span>, busca patrones, anomalías y características que podrían afectar el análisis posterior.</p>
-  <table class="data-table">
-    <tr><th>Estadístico</th><th>Qué mide</th><th>Función en R</th></tr>
-    <tr><td>Media aritmética</td><td>Tendencia central</td><td><code>mean()</code></td></tr>
-    <tr><td>Mediana</td><td>Tendencia central robusta</td><td><code>median()</code></td></tr>
-    <tr><td>Desviación estándar</td><td>Dispersión</td><td><code>sd()</code></td></tr>
-    <tr><td>Coeficiente de variación</td><td>Dispersión relativa (%)</td><td><code>sd(x)/mean(x)*100</code></td></tr>
-    <tr><td>Rango intercuartílico</td><td>Dispersión central</td><td><code>IQR()</code></td></tr>
-  </table>
-  <div class="info-box">
-    <div class="label">CV en agronomía</div>
-    CV &lt; 10%: buen control experimental; 10–20%: aceptable; 20–30%: moderadamente alto; &gt; 30%: posibles problemas en el manejo <span class="cite">(Gómez y Gómez, 1984)</span>.
-  </div>
-</section>
-
-<!-- ═══ SUPUESTOS ═══ -->
-<section class="section" id="supuestos">
-  <div class="section-tag">Módulo 5</div>
-  <h2>Validación de supuestos del ANAVA</h2>
-  <p>Las conclusiones del ANAVA solo son válidas si se cumplen cuatro supuestos sobre los errores del modelo <span class="cite">(Montgomery, 2020)</span>.</p>
-
-  <div class="warn-box">
-    <div class="label">Matiz fundamental</div>
-    Que una prueba como Shapiro-Wilk arroje p &gt; 0.05 <strong>no demuestra</strong> que el supuesto sea verdadero. Solo indica que la prueba no encontró evidencia suficiente para rechazarlo con los datos disponibles. La no-significancia no es lo mismo que la confirmación <span class="cite">(Montgomery, 2020)</span>.
-  </div>
-
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">Supuesto 1: Normalidad de los errores</button>
-  <div class="accordion-body">
-    <p>Los residuos deben distribuirse aproximadamente como N(0, σ²). Se evalúa con Shapiro-Wilk <code>shapiro.test()</code> y Q-Q plot <span class="cite">(Steel et al., 1997; Kuehl, 2001)</span>.</p>
-  </div>
-
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">Supuesto 2: Homogeneidad de varianzas</button>
-  <div class="accordion-body">
-    <p>Las varianzas deben ser similares entre tratamientos. Pruebas: Bartlett (potente si hay normalidad), Levene (robusta), Fligner-Killeen (no paramétrica) <span class="cite">(Kuehl, 2001)</span>.</p>
-  </div>
-
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">Supuesto 3: Independencia de los errores</button>
-  <div class="accordion-body">
-    <p>Se garantiza principalmente mediante la aleatorización. Se evalúa con Durbin-Watson (se espera DW ≈ 2) <span class="cite">(Montgomery, 2020)</span>.</p>
-  </div>
-
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">Supuesto 4: Aditividad del modelo</button>
-  <div class="accordion-body">
-    <p>Los efectos se combinan aditivamente. Se evalúa con la prueba de Tukey para no aditividad, especialmente en DBCA <span class="cite">(Tukey, 1949; Steel et al., 1997)</span>.</p>
-  </div>
-
-  <h3>Flujo de decisión cuando se violan supuestos</h3>
-  <p>La decisión de usar pruebas no paramétricas no es automática. Se debe considerar <span class="cite">(Montgomery, 2020; Conover, 1999)</span>:</p>
-  <div class="info-box">
-    <div class="label">Factores a evaluar antes de abandonar el ANAVA</div>
-    <p>1. <strong>Gravedad</strong> de la desviación (leve vs. severa).</p>
-    <p>2. <strong>Tamaño y equilibrio</strong> de las muestras (el ANAVA es robusto con muestras grandes y balanceadas).</p>
-    <p>3. <strong>Valores atípicos:</strong> ¿son errores de digitación o datos legítimos?</p>
-    <p>4. <strong>Transformación</strong> de la variable respuesta (log, raíz cuadrada, Box-Cox).</p>
-    <p>5. <strong>ANAVA de Welch</strong> (robusto ante heterocedasticidad).</p>
-    <p>6. <strong>Modelos lineales generalizados</strong> para datos no normales por naturaleza (conteos, proporciones).</p>
-    <p>7. Solo si las alternativas anteriores no son viables → pruebas no paramétricas.</p>
-  </div>
-</section>
-
-<!-- ═══ ANAVA ═══ -->
-<section class="section" id="anava">
-  <div class="section-tag">Módulo 6</div>
-  <h2>Análisis de Varianza (ANAVA)</h2>
-  <p>El ANAVA descompone la variabilidad total en componentes atribuibles a tratamientos y al error <span class="cite">(Kuehl, 2001)</span>.</p>
-  <div class="formula">H₀: μ₁ = μ₂ = … = μₜ  &nbsp;vs.&nbsp;  H₁: al menos un μᵢ ≠ μⱼ</div>
-
-  <div class="warn-box">
-    <div class="label">Lo que el ANAVA dice y lo que no dice</div>
-    <p>Un F significativo solo indica que <strong>al menos dos</strong> medias difieren. No dice cuáles ni cuántas. Para eso se necesitan pruebas de comparación múltiple. Tampoco indica si la diferencia tiene relevancia práctica: una diferencia de 0.01 t/ha puede ser estadísticamente significativa con suficientes repeticiones, pero agronómicamente irrelevante <span class="cite">(Kuehl, 2001)</span>.</p>
-  </div>
-
-  <h3>¿Por qué no hacer múltiples pruebas t?</h3>
-  <p>Con 4 tratamientos hay 6 comparaciones pareadas. Si cada una se hace a α = 0.05, la probabilidad de al menos un error Tipo I es 1 − (0.95)⁶ ≈ 0.26 — cinco veces más que el 5% nominal. El ANAVA controla esta inflación usando un solo estadístico F global <span class="cite">(Montgomery, 2020)</span>.</p>
-
-  <div class="formula">CV(%) = (√CM<sub>Error</sub> / ȳ) × 100</div>
-</section>
-
-<!-- ═══ NO PARAMÉTRICAS ═══ -->
-<section class="section" id="nopar">
-  <div class="section-tag">Módulo 6 (cont.)</div>
-  <h2>Pruebas no paramétricas</h2>
-  <p>Alternativas basadas en rangos cuando los supuestos del ANAVA no se cumplen de forma severa y las alternativas paramétricas robustas no son aplicables <span class="cite">(Conover, 1999; Siegel y Castellan, 1988)</span>.</p>
-  <table class="data-table">
-    <tr><th>Situación</th><th>Prueba</th><th>Función en R</th></tr>
-    <tr><td>DCA, supuestos violados</td><td>Kruskal-Wallis</td><td><code>kruskal.test()</code></td></tr>
-    <tr><td>DBCA, supuestos violados</td><td>Friedman</td><td><code>friedman.test()</code></td></tr>
-  </table>
-</section>
-
-<!-- ═══ COMPARACIÓN ═══ -->
-<section class="section" id="comparacion">
-  <div class="section-tag">Módulo 6 (cont.)</div>
-  <h2>Pruebas de comparación múltiple de medias</h2>
-  <table class="data-table">
-    <tr><th>Prueba</th><th>Control de error</th><th>Potencia</th><th>Uso</th></tr>
-    <tr><td>LSD (Fisher)</td><td>Bajo (por comparación)</td><td>Alta</td><td>Pocas comparaciones planificadas</td></tr>
-    <tr><td>Tukey HSD</td><td>Alto (familywise)</td><td>Moderada</td><td>Estándar, todas las comparaciones</td></tr>
-    <tr><td>Duncan</td><td>Moderado (escalonado)</td><td>Alta</td><td>Uso extendido en agronomía tropical</td></tr>
-    <tr><td>Scott-Knott</td><td>Agrupamiento sin ambigüedad</td><td>Variable</td><td>Muchos tratamientos</td></tr>
-  </table>
-  <div class="warn-box">
-    <div class="label">Duncan vs. Tukey: matiz importante</div>
-    Duncan tiene mayor sensibilidad para detectar diferencias, pero a costa de un control menos estricto del error Tipo I familywise. Por esta razón, algunas revistas exigen Tukey y no aceptan Duncan. La elección debe justificarse <span class="cite">(De Mendiburu y Yaseen, 2020)</span>.
-  </div>
-</section>
-
-<!-- ═══ R Y SHINY ═══ -->
-<section class="section" id="r-shiny">
-  <div class="section-tag">Módulo 7</div>
-  <h2>R y el framework Shiny</h2>
-  <p>R es un lenguaje de software libre para análisis estadístico, creado por Ihaka y Gentleman (1993) y mantenido por la R Foundation <span class="cite">(R Core Team, 2024)</span>. Shiny es un framework de Posit que transforma código R en aplicaciones web interactivas accesibles desde cualquier navegador <span class="cite">(Chang et al., 2023)</span>.</p>
-  <table class="data-table">
-    <tr><th>Componente Shiny</th><th>Rol</th><th>Contenido</th></tr>
-    <tr><td><code>ui.R</code></td><td>Interfaz (lo que ve el usuario)</td><td>Paneles, botones, gráficos, tablas</td></tr>
-    <tr><td><code>server.R</code></td><td>Lógica (los cálculos)</td><td>Algoritmos, procesamiento, gráficos</td></tr>
-  </table>
-</section>
-
-<!-- ═══ TANAKA & AMALIAH ═══ -->
-<section class="section" id="tanaka">
-  <div class="section-tag">Estado del arte</div>
-  <h2>Estado actual de los paquetes R para diseño de experimentos</h2>
-  <p>Tanaka y Amaliah <span class="cite">(2025)</span> publicaron en <em>The R Journal</em> un análisis exhaustivo del ecosistema de paquetes R para diseño experimental (RJ-2024-013). Sus hallazgos refuerzan directamente la justificación de la herramienta propuesta.</p>
-
-  <h3>Hallazgos principales</h3>
-  <div class="info-box">
-    <div class="label">Datos clave del estudio</div>
-    <p>• Se identificaron <strong>105 paquetes</strong> en la vista CRAN ExperimentalDesign.</p>
-    <p>• Solo <strong>10 paquetes</strong> concentraron aproximadamente el 68% de las descargas entre 2013–2021.</p>
-    <p>• Los paquetes antiguos persisten entre los más descargados, con pocas alternativas modernas adoptadas masivamente.</p>
-    <p>• El desarrollo de paquetes para diseño experimental ocurre en <strong>silos</strong>: baja conectividad entre desarrolladores y duplicación de esfuerzos.</p>
-    <p>• Predominan las interfaces tipo <strong>«receta»</strong> (funciones con nombres de diseños: <code>design.lsd()</code>, <code>design.split()</code>), que dificultan la extensibilidad.</p>
-    <p>• Los autores señalan la necesidad de interfaces <strong>cognitivas, coherentes y extensibles</strong>.</p>
-  </div>
-
-  <h3>Vinculación con la herramienta propuesta</h3>
-  <p>El hallazgo central de Tanaka y Amaliah es que <strong>el problema no es la falta de funciones estadísticas, sino su fragmentación y dificultad de integración</strong>. La herramienta propuesta aborda directamente esta brecha al reunir generación de diseños, validación de supuestos, análisis paramétrico/no paramétrico, comparación de medias e informes automatizados en un único flujo secuencial integrado en Shiny.</p>
-
-  <p style="font-size:.88rem;color:var(--text-muted)">Tanaka, E. y Amaliah, D. (2025). Current State and Prospects of R-Packages for the Design of Experiments. <em>The R Journal</em>, 16(2), 27–40. doi:10.32614/RJ-2024-013</p>
-</section>
-
-<!-- ═══ SOFTWARE ═══ -->
-<section class="section" id="software">
-  <div class="section-tag">Módulo 7 (cont.)</div>
-  <h2>Software existente para experimentación agrícola</h2>
-  <div class="software-grid">
-    <div class="sw-card"><h4>InfoStat</h4><div class="sw-type">Escritorio · Argentina · 2002</div><div class="tags"><span class="tag tag-green">ANAVA</span><span class="tag tag-orange">No web</span><span class="tag tag-orange">Propietario</span></div><p>Plataforma integral con integración R. La más usada en América Latina, pero de escritorio y licencia comercial <span class="cite">(Di Rienzo et al., 2011)</span>.</p></div>
-    <div class="sw-card"><h4>agricolae</h4><div class="sw-type">Paquete R · 2005</div><div class="tags"><span class="tag tag-green">Libre</span><span class="tag tag-brown">Solo código</span></div><p>Referente metodológico para esta tesis. Requiere programación directa en R <span class="cite">(De Mendiburu y Simon, 2015)</span>.</p></div>
-    <div class="sw-card"><h4>FielDHub</h4><div class="sw-type">Shiny · 2021</div><div class="tags"><span class="tag tag-green">Web</span><span class="tag tag-orange">Solo diseños</span></div><p>Especializada en generación y aleatorización de diseños. No incluye análisis estadístico posterior <span class="cite">(Murillo et al., 2021)</span>.</p></div>
-    <div class="sw-card"><h4>grapesAgri1</h4><div class="sw-type">Shiny · 2021</div><div class="tags"><span class="tag tag-green">Web</span><span class="tag tag-brown">Modular</span></div><p>Colección de apps independientes, no un flujo integrado <span class="cite">(Gopinath et al., 2021)</span>.</p></div>
-    <div class="sw-card"><h4>Mr.Bean</h4><div class="sw-type">Shiny · 2024</div><div class="tags"><span class="tag tag-green">Web</span><span class="tag tag-green">Avanzado</span></div><p>Orientada a fitomejoramiento y modelos mixtos, no al flujo DCA/DBCA/Factorial clásico <span class="cite">(Aparicio et al., 2024)</span>.</p></div>
-    <div class="sw-card"><h4>AgroR</h4><div class="sw-type">Paquete R + Shiny · 2025</div><div class="tags"><span class="tag tag-green">Web</span><span class="tag tag-green">Integral</span></div><p>Antecedente más cercano. AEDA, supuestos, ANAVA, comparaciones. Limitada en generación de diseños y generación de informes automatizados <span class="cite">(Shimizu et al., 2025)</span>.</p></div>
-  </div>
-  <div class="highlight"><strong>Argumento central:</strong> Ninguna herramienta web existente integra en un solo flujo secuencial las siete etapas: generación del diseño → carga de datos → AEDA → supuestos → ANAVA → comparaciones → informe automatizado.</div>
-</section>
-
-<!-- ═══ HERRAMIENTA ═══ -->
-<section class="section" id="herramienta">
-  <div class="section-tag">Módulo 7 (cont.)</div>
-  <h2>La herramienta propuesta</h2>
-  <table class="data-table">
-    <tr><th>#</th><th>Módulo</th><th>Entrada</th><th>Salida</th></tr>
-    <tr><td>1</td><td>Generación de diseños</td><td>Tratamientos, repeticiones, tipo</td><td>Matriz aleatorizada, plano exportable</td></tr>
-    <tr><td>2</td><td>Carga / AEDA</td><td>CSV/TXT</td><td>Estadísticos, gráficos exploratorios</td></tr>
-    <tr><td>3</td><td>Supuestos</td><td>Modelo ajustado</td><td>Diagnóstico, recomendación</td></tr>
-    <tr><td>4</td><td>ANAVA</td><td>Datos + diseño</td><td>Tabla ANAVA, F, p, CV</td></tr>
-    <tr><td>5</td><td>No paramétricas</td><td>Datos + diseño</td><td>Kruskal-Wallis / Friedman</td></tr>
-    <tr><td>6</td><td>Comparación de medias</td><td>Modelo significativo</td><td>Agrupamiento de letras, gráficos</td></tr>
-    <tr><td>7</td><td>Informes</td><td>Todos los resultados</td><td>PDF / Word automatizado</td></tr>
-  </table>
-  <p><strong>Tipo:</strong> investigación aplicada, diseño no experimental, modalidad desarrollo tecnológico. <strong>Validación:</strong> comparación cruzada contra valores publicados (Kuehl, Steel, Montgomery), cálculos independientes en R e InfoStat.</p>
-</section>
-
-<!-- ═══ ERRORES A EVITAR ═══ -->
-<section class="section" id="errores">
-  <div class="section-tag">Preparación</div>
-  <h2>Errores que no debemos cometer en la defensa</h2>
-  <p>Esta lista recoge los errores conceptuales más frecuentes en defensas de tesis sobre experimentación agrícola. Si evitas todos estos, vas muy bien.</p>
-  <div class="warn-box">
-    <div class="label">Errores estadísticos</div>
-    <p>1. Decir que p &gt; 0.05 «confirma» o «demuestra» la hipótesis nula.</p>
-    <p>2. Confundir repetición con submuestreo.</p>
-    <p>3. Considerar el bloque como tratamiento.</p>
-    <p>4. Interpretar efectos principales cuando existe interacción significativa en un factorial.</p>
-    <p>5. Aplicar comparación de medias sin haber justificado primero el ANAVA.</p>
-    <p>6. Decir que Kruskal-Wallis es «mejor» que ANAVA — es una alternativa, no una mejora.</p>
-    <p>7. Afirmar que el CV «debe ser» menor que cierto umbral sin matizar por tipo de variable y cultivo.</p>
-  </div>
-  <div class="warn-box">
-    <div class="label">Errores sobre el proyecto</div>
-    <p>8. Presentar la herramienta como sustituto universal de todos los paquetes R existentes.</p>
-    <p>9. Afirmar que una interfaz amigable garantiza resultados correctos — la interfaz facilita el acceso, no reemplaza el conocimiento estadístico.</p>
-    <p>10. Confundir la validación numérica (¿da los mismos números que R e InfoStat?) con la evaluación de usabilidad (¿el usuario la entiende y la usa bien?).</p>
-    <p>11. No reconocer que la herramienta tiene alcance limitado (DCA, DBCA, factorial — no cubre modelos mixtos, análisis espacial ni multiambiente).</p>
-  </div>
-</section>
-
-<!-- ═══ PREGUNTAS DEL JURADO ═══ -->
-<section class="section" id="defensa">
-  <div class="section-tag">Preparación</div>
-  <h2>Preguntas probables del jurado</h2>
-  <p>Organizadas por área temática. Las respuestas deben manejarse con fluidez.</p>
-
-  <h3>Antecedentes y marco teórico</h3>
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿Qué diferencia a su herramienta de AgroR?</button>
-  <div class="accordion-body"><p>AgroR cubre AEDA, supuestos, ANAVA y comparaciones, pero la generación de diseños experimentales es limitada y no genera informes interpretativos automatizados en PDF/Word. La herramienta propuesta cubre el flujo completo desde la planificación hasta el informe final.</p></div>
-
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿Qué aporta frente a InfoStat?</button>
-  <div class="accordion-body"><p>InfoStat es de escritorio, propietario y requiere instalación local. La herramienta propuesta es web, de acceso libre, publicable en shinyapps.io y accesible desde cualquier navegador y dispositivo.</p></div>
-
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿Conocen el trabajo de Tanaka y Amaliah sobre paquetes R para DoE?</button>
-  <div class="accordion-body"><p>Sí. Su análisis (RJ-2024-013) muestra que de 105 paquetes CRAN para diseño experimental, 10 concentran el 68% de descargas, el desarrollo ocurre en silos y predominan interfaces tipo «receta». La herramienta propuesta responde directamente a su llamado por interfaces integradas y coherentes.</p></div>
-
-  <h3>Metodología</h3>
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿Por qué Shiny y no otra tecnología web?</button>
-  <div class="accordion-body"><p>Shiny reutiliza directamente código R validado por la comunidad (agricolae, car, lmtest) sin reescribirlo. La comunidad agrícola ya tiene familiaridad con R, facilitando la auditoría y extensión.</p></div>
-
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿Cómo garantizan la precisión de los resultados?</button>
-  <div class="accordion-body"><p>Validación cruzada en tres niveles: (1) contra valores publicados en Kuehl, Steel y Montgomery, (2) contra cálculos independientes en consola de R, (3) contra InfoStat. Las discrepancias se documentan.</p></div>
-
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿Qué tipo de investigación es y por qué?</button>
-  <div class="accordion-body"><p>Aplicada (resuelve un problema práctico), diseño no experimental (no se manipulan variables biológicas), modalidad desarrollo tecnológico (se construye un artefacto funcional). El componente de usabilidad (Fase IV) es descriptivo.</p></div>
-
-  <h3>Supuestos y decisiones estadísticas</h3>
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿Qué pasa si no se cumplen los supuestos?</button>
-  <div class="accordion-body"><p>El Módulo 3 evalúa los cuatro supuestos. Si la violación es leve y las muestras son balanceadas, el ANAVA suele ser robusto. Si es severa, se considera primero la transformación de datos o la corrección de Welch. Solo si ninguna alternativa paramétrica es viable, se recurre a Kruskal-Wallis (DCA) o Friedman (DBCA).</p></div>
-
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿Por qué incluyeron cuatro supuestos y no solo normalidad?</button>
-  <div class="accordion-body"><p>Porque la validez del ANAVA depende de los cuatro. Verificar solo normalidad e ignorar homocedasticidad, independencia o aditividad puede llevar a conclusiones incorrectas. La herramienta implementa el diagnóstico completo.</p></div>
-
-  <h3>Alcance y limitaciones</h3>
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿Qué no cubre la herramienta?</button>
-  <div class="accordion-body"><p>Modelos lineales mixtos, análisis espacial, análisis multiambiente, cuadrados latinos, parcelas divididas, diseños aumentados. El alcance se limita a DCA, DBCA y factorial — los diseños más frecuentes en la investigación agrícola de pregrado.</p></div>
-
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿La herramienta reemplaza a InfoStat o AgroR?</button>
-  <div class="accordion-body"><p>No es un sustituto universal. Es una alternativa web de acceso libre que integra un flujo específico no cubierto completamente por ninguna herramienta individual existente. Su ventaja es la integración secuencial, no la amplitud de funciones avanzadas.</p></div>
-
-  <h3>Usabilidad y reproducibilidad</h3>
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿Una interfaz amigable garantiza resultados correctos?</button>
-  <div class="accordion-body"><p>No. La interfaz facilita el acceso a los procedimientos, pero no reemplaza el conocimiento estadístico del usuario. Por eso la herramienta incluye diagnósticos automáticos y recomendaciones interpretativas, aunque la responsabilidad de la interpretación final siempre recae en el investigador.</p></div>
-
-  <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">¿Cómo se mantendría la herramienta a futuro?</button>
-  <div class="accordion-body"><p>El código será publicado en un repositorio GitHub público. La arquitectura modular de Shiny permite actualizar módulos independientemente. Futuros tesistas podrían extender la herramienta incorporando nuevos diseños o procedimientos.</p></div>
-</section>
-
-<!-- ═══ AUTOEVALUACIÓN ═══ -->
-<section class="section" id="autoevaluacion">
-  <div class="section-tag">Práctica</div>
-  <h2>Autoevaluación interactiva</h2>
-  <p>Selecciona tu respuesta y comprueba. Al final verás tu calificación.</p>
-
-  <div id="quiz-area"></div>
-  <div id="quiz-score" class="quiz-score" style="display:none">
-    <p>Resultado:</p>
-    <div class="big" id="score-display"></div>
-    <p id="score-msg"></p>
-    <button class="quiz-btn" onclick="resetQuiz()">Reiniciar</button>
-  </div>
-</section>
-
-<!-- ═══ CALCULADORAS ═══ -->
-<section class="section" id="calculadoras">
-  <div class="section-tag">Herramientas didácticas</div>
-  <h2>Calculadoras educativas</h2>
-  <p>Estas calculadoras son recursos de aprendizaje, no el motor analítico de la herramienta propuesta.</p>
-
-  <h3>Grados de libertad</h3>
-  <div class="calc-box">
-    <label>Tipo de diseño</label>
-    <select id="gl-tipo" onchange="calcGL()"><option value="dca">DCA</option><option value="dbca">DBCA</option><option value="fact">Factorial A×B</option></select>
-    <div id="gl-inputs">
-      <label>Tratamientos (t)</label><input type="number" id="gl-t" value="4" min="2" max="50" onchange="calcGL()">
-      <label>Repeticiones (r) / Bloques (b)</label><input type="number" id="gl-r" value="5" min="2" max="50" onchange="calcGL()">
+  <section class="slide bg bg-field active" data-title="Del campo a la evidencia" data-note="Abra con una pausa. Presente el título y explique que la propia defensa demuestra la filosofía del proyecto: convertir procedimientos estadísticos complejos en una experiencia accesible. No describa aún todos los módulos." data-time="0:45">
+    <div class="hero-scene">
+      <div class="eyebrow reveal">Proyecto de Trabajo de Grado · Ingeniería Agronómica</div>
+      <h1 class="reveal">Del experimento agrícola a la <span class="accent">evidencia confiable</span></h1>
+      <p class="lead reveal">Desarrollo de una herramienta web para el diseño y análisis estadístico de experimentos agrícolas.</p>
+      <div class="identity reveal"><b>Yenireth del Carmen Rengel Tocuyo</b><span>Tutor: M.Sc. Víctor H. Malavé G. · UDO, Núcleo de Monagas</span></div>
+      <button class="cta reveal" onclick="go(1);full()">Iniciar defensa <span>→</span></button>
     </div>
-    <div id="gl-fact-inputs" style="display:none">
-      <label>Niveles Factor A (a)</label><input type="number" id="gl-a" value="3" min="2" max="20" onchange="calcGL()">
-      <label>Niveles Factor B (b)</label><input type="number" id="gl-b" value="4" min="2" max="20" onchange="calcGL()">
-      <label>Repeticiones (r)</label><input type="number" id="gl-r2" value="3" min="2" max="50" onchange="calcGL()">
+  </section>
+
+  <section class="slide" data-title="El costo de una mala decisión" data-note="La tesis nace de un problema metodológico, no informático. Explique que el software no corrige un experimento mal planificado. Una conclusión agrícola puede afectar insumos, variedades, recursos y recomendaciones productivas." data-time="1:00">
+    <div class="scene grid2">
+      <div><div class="eyebrow reveal">01 · El problema</div><h2 class="reveal">Un análisis sofisticado no rescata un <span class="accent">experimento deficiente</span>.</h2><p class="lead reveal">La validez de la conclusión depende del diseño, la calidad de los datos y la elección del procedimiento estadístico.</p></div>
+      <div class="glass reveal"><div class="stat">1</div><p class="stat-label">decisión incorrecta puede convertir variabilidad del suelo en un “efecto” del tratamiento.</p><div class="quote">Garbage in,<br><span class="accent">garbage out.</span></div></div>
     </div>
-    <div class="calc-result" id="gl-result"></div>
-  </div>
+    <div class="source-note">Fundamento: Fisher (1935); Kuehl (2001); Montgomery (2020).</div>
+  </section>
 
-  <h3>Coeficiente de variación</h3>
-  <div class="calc-box">
-    <label>CM<sub>Error</sub></label><input type="number" id="cv-cme" value="0.45" step="0.01" min="0" onchange="calcCV()">
-    <label>Media general (ȳ)</label><input type="number" id="cv-mean" value="6.20" step="0.01" min="0.01" onchange="calcCV()">
-    <div class="calc-result" id="cv-result"></div>
-  </div>
+  <section class="slide" data-title="Una experiencia fragmentada" data-note="Muestre que no se trata de ausencia de software. Existen buenas herramientas, pero cada una resuelve partes distintas. El usuario cambia de aplicación, formato y lógica. Esa fragmentación es la brecha que motiva la investigación." data-time="1:10">
+    <div class="scene"><div class="eyebrow reveal">02 · La brecha</div><h2 class="reveal">Muchas herramientas.<br><span class="accent">Un flujo fragmentado.</span></h2><div class="cards reveal"><div class="card"><b>Planificar</b><p>FielDHub destaca en generación y aleatorización.</p></div><div class="card"><b>Analizar</b><p>AgroR y grapesAgri1 procesan experimentos agrícolas.</p></div><div class="card"><b>Profundizar</b><p>Mr.Bean se orienta a ensayos y fitomejoramiento avanzado.</p></div><div class="card"><b>Validar</b><p>InfoStat es una referencia integral de escritorio.</p></div><div class="card"><b>Interpretar</b><p>Los reportes automatizados siguen siendo parciales.</p></div><div class="card focus"><b>Oportunidad</b><p>Un recorrido único: diseño → análisis → interpretación → informe.</p></div></div></div>
+    <div class="source-note">Síntesis del Cuadro 1 del proyecto: Di Rienzo et al. (2011); Gopinath et al. (2021); Murillo et al. (2021); Aparicio et al. (2024); Shimizu et al. (2025).</div>
+  </section>
 
-  <h3>Unidades experimentales totales</h3>
-  <div class="calc-box">
-    <label>Tratamientos (t)</label><input type="number" id="ue-t" value="5" min="2" max="100" onchange="calcUE()">
-    <label>Repeticiones (r)</label><input type="number" id="ue-r" value="4" min="2" max="100" onchange="calcUE()">
-    <div class="calc-result" id="ue-result"></div>
-  </div>
-</section>
+  <section class="slide" data-title="Propósito y objetivos" data-note="Lea el objetivo general solo una vez. Después explique los tres objetivos como acciones verificables: programar, diseñar e integrar, y validar. Destaque que el tercer objetivo impide que la facilidad de uso sustituya el rigor numérico." data-time="1:15">
+    <div class="scene grid2"><div><div class="eyebrow reveal">03 · Propósito</div><h2 class="reveal">Una herramienta web que acompañe el <span class="accent">flujo completo</span>.</h2><p class="lead reveal">Desarrollar una aplicación Shiny para el diseño y análisis estadístico de experimentos agrícolas.</p></div><div class="objective-list reveal"><div class="objective"><span>01</span><p><b>Programar</b> algoritmos biométricos y matrices experimentales en R.</p></div><div class="objective"><span>02</span><p><b>Diseñar</b> una interfaz secuencial, interactiva e interpretable.</p></div><div class="objective"><span>03</span><p><b>Validar</b> precisión numérica y pertinencia de las salidas frente a referencias.</p></div></div></div>
+  </section>
 
-<!-- ═══ REFERENCIAS ═══ -->
-<section class="section" id="referencias">
-  <div class="section-tag">Bibliografía</div>
-  <h2>Referencias</h2>
-  <p style="font-size:.9rem;color:var(--text-muted);line-height:1.8">
-    Aparicio, J. et al. (2024). Mr.Bean: a comprehensive statistical and visualization application for modeling agricultural field trials data. <em>Frontiers in Plant Science</em>, 14, 1290078.<br>
-    Chang, W. et al. (2023). <em>Shiny: Web Application Framework for R</em>. Posit Software.<br>
-    Conover, W. J. (1999). <em>Practical Nonparametric Statistics</em> (3rd ed.). Wiley.<br>
-    De Mendiburu, F. y Simon, R. (2015). Agricolae – Ten years of an open source statistical tool. <em>PeerJ PrePrints</em>, 3, e1404v1.<br>
-    De Mendiburu, F. y Yaseen, M. (2020). <em>agricolae: Statistical Procedures for Agricultural Research</em>. R package v1.3-3.<br>
-    Di Rienzo, J. et al. (2011). InfoStat versión 2011. Grupo InfoStat, FCA, UNC.<br>
-    Fisher, R. A. (1925). <em>Statistical Methods for Research Workers</em>. Oliver &amp; Boyd.<br>
-    Fisher, R. A. (1935). <em>The Design of Experiments</em>. Oliver &amp; Boyd.<br>
-    Gómez, K. A. y Gómez, A. A. (1984). <em>Statistical Procedures for Agricultural Research</em> (2nd ed.). Wiley.<br>
-    Gopinath, P. P. et al. (2021). grapesAgri1: Collection of Shiny Apps for Data Analysis in Agriculture. <em>JOSS</em>, 6(63), 3437.<br>
-    Kuehl, R. O. (2001). <em>Diseño de experimentos</em>. Thomson Learning.<br>
-    Montgomery, D. C. (2020). <em>Design and Analysis of Experiments</em> (10th ed.). Wiley.<br>
-    Murillo, D. A. et al. (2021). FielDHub: A Shiny App for Design of Experiments in Life Sciences. <em>JOSS</em>, 6(61), 3122.<br>
-    R Core Team (2024). <em>R: A language and environment for statistical computing</em>. R Foundation.<br>
-    Shimizu, G. D. et al. (2025). AgroR: An R package and a Shiny interface for agricultural experiment analysis. <em>Acta Scientiarum. Agronomy</em>, 47, e73889.<br>
-    Siegel, S. y Castellan, N. J. (1988). <em>Nonparametric Statistics for the Behavioral Sciences</em> (2nd ed.). McGraw-Hill.<br>
-    Steel, R. G. D., Torrie, J. H. y Dickey, D. A. (1997). <em>Principles and Procedures of Statistics</em> (3rd ed.). McGraw-Hill.<br>
-    Tanaka, E. y Amaliah, D. (2025). Current State and Prospects of R-Packages for the Design of Experiments. <em>The R Journal</em>, 16(2), 27–40. doi:10.32614/RJ-2024-013.<br>
-    Tukey, J. W. (1949). One degree of freedom for non-additivity. <em>Biometrics</em>, 5(3), 232–242.<br>
-    Tukey, J. W. (1977). <em>Exploratory Data Analysis</em>. Addison-Wesley.<br>
-    Wickham, H. (2016). <em>ggplot2: Elegant Graphics for Data Analysis</em> (2nd ed.). Springer.
-  </p>
-</section>
+  <section class="slide bg bg-history" data-title="Fisher y el origen agrícola" data-note="Conecte el proyecto con su raíz agrícola. En Rothamsted, Fisher convirtió la variación del campo en una estructura analizable. Explique brevemente aleatorización, repetición y control local; no convierta esta escena en una clase completa." data-time="1:20">
+    <div class="scene" style="max-width:850px"><div class="eyebrow reveal">04 · Fundamento histórico</div><h2 class="reveal">La estadística experimental nació <span class="accent">en el campo</span>.</h2><p class="lead reveal">R. A. Fisher transformó la variación agrícola en evidencia mediante tres principios que siguen gobernando el diseño moderno.</p><div class="principles reveal"><div class="principle"><i>01</i><h3>Aleatorizar</h3><p>Protege contra asignaciones sistemáticas y sesgos.</p></div><div class="principle"><i>02</i><h3>Repetir</h3><p>Permite estimar el error experimental y ganar precisión.</p></div><div class="principle"><i>03</i><h3>Bloquear</h3><p>Controla fuentes conocidas de heterogeneidad.</p></div></div></div>
+    <div class="source-note">Fisher (1935), The Design of Experiments.</div>
+  </section>
 
-</div>
+  <section class="slide" data-title="Antecedentes comparados" data-note="No diga que las demás herramientas son deficientes. Explique que fueron creadas con objetivos distintos. La contribución del proyecto consiste en articular capacidades dentro del alcance definido: experimentos agrícolas clásicos." data-time="1:30">
+    <div class="scene"><div class="eyebrow reveal">05 · Antecedentes</div><h2 class="reveal">La innovación está en la <span class="accent">integración</span>.</h2><div class="matrix reveal"><div class="head">Capacidad</div><div class="head">InfoStat</div><div class="head">FielDHub</div><div class="head">grapesAgri1</div><div class="head">Mr.Bean</div><div class="head">AgroR</div><b>Generar diseños</b><span class="yes">●</span><span class="yes">●</span><span class="no">○</span><span class="no">○</span><span class="partial">◐</span><b>AEDA + supuestos</b><span class="yes">●</span><span class="no">○</span><span class="partial">◐</span><span class="yes">●</span><span class="yes">●</span><b>ANAVA + post-hoc</b><span class="yes">●</span><span class="no">○</span><span class="yes">●</span><span class="partial">◐</span><span class="yes">●</span><b>Modelos avanzados</b><span class="yes">●</span><span class="no">○</span><span class="no">○</span><span class="yes">●</span><span class="no">○</span><b>Informe automático</b><span class="partial">◐</span><span class="no">○</span><span class="no">○</span><span class="no">○</span><span class="partial">◐</span><b>Aplicación web</b><span class="no">○</span><span class="yes">●</span><span class="yes">●</span><span class="yes">●</span><span class="yes">●</span></div><p class="tiny reveal">● Destacada/implementada &nbsp; ◐ Parcial/limitada &nbsp; ○ No reportada</p></div>
+  </section>
 
-<footer class="footer">
-  <p><strong>Diseño de Experimentos Agrícolas — Guía de Estudio v2</strong></p>
-  <p>PTDG de Yenireth del Carmen Rengel Tocuyo · Tutor: M.Sc. Víctor H. Malavé G.</p>
-  <p>Universidad de Oriente · Núcleo de Monagas · Dpto. de Ingeniería Agronómica · 2026</p>
-</footer>
+  <section class="slide" data-title="El flujo propuesto" data-note="Esta es una de las escenas centrales. Recorra el flujo de izquierda a derecha. Explique que el valor no es solo reunir funciones, sino ordenar decisiones y conservar coherencia entre la salida numérica y la interpretación." data-time="1:10">
+    <div class="scene"><div class="eyebrow reveal">06 · La propuesta</div><h2 class="reveal">Siete etapas. <span class="accent">Una sola experiencia.</span></h2><div class="pipeline reveal"><div class="pipe"><strong>1</strong><span>Diseñar</span></div><div class="pipe"><strong>2</strong><span>Explorar</span></div><div class="pipe"><strong>3</strong><span>Validar</span></div><div class="pipe"><strong>4</strong><span>ANAVA</span></div><div class="pipe"><strong>5</strong><span>Alternativa</span></div><div class="pipe"><strong>6</strong><span>Comparar</span></div><div class="pipe"><strong>7</strong><span>Informar</span></div></div><div class="quote reveal" style="margin-top:60px">La interfaz no sustituye el método:<br><span class="accent">lo hace visible y recorrible.</span></div></div>
+  </section>
 
+  <section class="slide bg bg-tech" data-title="Arquitectura modular" data-note="Invite al jurado a observar los módulos. Puede hacer clic sobre alguno para revelar su salida. Destaque las decisiones tecnológicas: R base, aov, pruebas estándar, ggplot2, gt, R Markdown y officer." data-time="1:50">
+    <div class="scene" style="max-width:1100px"><div class="eyebrow reveal">07 · Arquitectura</div><h2 class="reveal">Un sistema modular, <span class="lime">auditable y ampliable</span>.</h2><div class="modules reveal"><div class="module" tabindex="0"><b>Módulo 1</b><h3>Diseños</h3><p>DCA, DBCA, factoriales y planos exportables.</p></div><div class="module" tabindex="0"><b>Módulo 2</b><h3>AEDA</h3><p>Estadísticos, histogramas, cajas y densidades.</p></div><div class="module" tabindex="0"><b>Módulo 3</b><h3>Supuestos</h3><p>Normalidad, varianzas, independencia y aditividad.</p></div><div class="module" tabindex="0"><b>Módulo 4</b><h3>ANAVA</h3><p>GL, cuadrados medios, F, p y coeficiente de variación.</p></div><div class="module" tabindex="0"><b>Módulo 5</b><h3>No paramétricas</h3><p>Kruskal–Wallis y Friedman cuando sean pertinentes.</p></div><div class="module" tabindex="0"><b>Módulo 6</b><h3>Comparaciones</h3><p>Tukey, LSD, Duncan y Scott–Knott.</p></div><div class="module" tabindex="0"><b>Módulo 7</b><h3>Informe</h3><p>Resultados e interpretación coherente en Word/PDF.</p></div><div class="module open"><b>Tecnología</b><h3>R + Shiny</h3><p>La lógica estadística y la interfaz comparten el mismo ecosistema.</p></div></div></div>
+  </section>
+
+  <section class="slide" data-title="Metodología en cuatro fases" data-note="Explique que la investigación es aplicada, no experimental y de desarrollo tecnológico. Cada fase produce evidencia: biblioteca patrón, módulos validados, integración completa y evaluación con usuarios." data-time="1:25">
+    <div class="scene"><div class="eyebrow reveal">08 · Marco metodológico</div><h2 class="reveal">Construir. Verificar. Integrar. <span class="accent">Escuchar.</span></h2><div class="phase-line reveal"><div class="phase"><i>I</i><h3>Datos de referencia</h3><p>Casos patrón de literatura reconocida.</p></div><div class="phase"><i>II</i><h3>Desarrollo modular</h3><p>Algoritmos, interfaz y validación por componente.</p></div><div class="phase"><i>III</i><h3>Integración global</h3><p>Flujo completo y registro de discrepancias.</p></div><div class="phase"><i>IV</i><h3>Usabilidad</h3><p>Estudiantes, docentes e investigadores.</p></div></div><p class="lead reveal" style="margin-top:50px">Investigación aplicada · diseño no experimental · desarrollo tecnológico · componente descriptivo de usabilidad.</p></div>
+  </section>
+
+  <section class="slide" data-title="Validación cruzada" data-note="Este es el argumento de confianza. Diferencie validación numérica, funcional y de interpretación. La herramienta no será aceptada porque se vea bien: debe reproducir los resultados esperados y emitir textos coherentes." data-time="1:30">
+    <div class="scene"><div class="eyebrow reveal">09 · Control de calidad</div><h2 class="reveal">La confianza no se declara.<br><span class="lime">Se demuestra.</span></h2><div class="validation reveal"><div class="source"><h3>appDoE</h3><p>Resultados calculados por cada módulo y por el flujo integrado.</p></div><div class="equal">≈</div><div class="source"><h3>Patrones de referencia</h3><p>Literatura especializada, consola R y software estadístico de contraste.</p></div></div><div class="grid2 reveal" style="margin-top:38px"><div><div class="match">3×</div><p class="stat-label">validación: numérica, funcional e interpretativa.</p></div><div class="glass"><b class="lime">Criterio</b><p>Coincidencia de estadísticos, tablas ANAVA, agrupamientos, gráficos y sentido de la interpretación.</p></div></div></div>
+  </section>
+
+  <section class="slide" data-title="La voz del usuario" data-note="Explique que la precisión es necesaria, pero no suficiente. La Fase IV evaluará facilidad, claridad, utilidad, pertinencia y satisfacción. No prometa inferencia poblacional: es una evaluación descriptiva y exploratoria." data-time="1:05">
+    <div class="scene"><div class="eyebrow reveal">10 · Evaluación de usabilidad</div><h2 class="reveal">Un resultado correcto también debe ser <span class="accent">comprensible</span>.</h2><p class="lead reveal">La percepción de usuarios potenciales se medirá con escala Likert y observaciones abiertas.</p><div class="likert reveal"><span>1<br><small>Muy en desacuerdo</small></span><span>2</span><span>3<br><small>Neutral</small></span><span>4</span><span>5<br><small>Muy de acuerdo</small></span></div><div class="cards reveal"><div class="card"><b>Facilidad</b><p>¿Puede completar el flujo?</p></div><div class="card"><b>Claridad</b><p>¿Entiende salidas y mensajes?</p></div><div class="card"><b>Utilidad</b><p>¿Apoya decisiones reales?</p></div></div></div>
+  </section>
+
+  <section class="slide" data-title="Plan de ejecución" data-note="Presente el proyecto como realizable. Cinco meses, cuatro fases y un presupuesto propio moderado. No lea todas las actividades; destaque los hitos: datos y arquitectura, módulos, validación, usuarios e informe final." data-time="1:05">
+    <div class="scene grid2"><div><div class="eyebrow reveal">11 · Viabilidad</div><h2 class="reveal">Cinco meses para pasar de la arquitectura a la <span class="accent">validación</span>.</h2><div class="timeline reveal"><div class="month"><b>Jul</b><div><span>Bibliografía</span><span>Datos patrón</span><span>Arquitectura</span></div></div><div class="month"><b>Ago</b><div><span>Diseños</span><span>Carga</span><span>AEDA</span></div></div><div class="month"><b>Sep</b><div><span>Supuestos</span><span>ANAVA</span><span>Comparaciones</span></div></div><div class="month"><b>Oct</b><div><span>Informes</span><span>Validación</span><span>Integración</span></div></div><div class="month"><b>Nov</b><div><span>Usuarios</span><span>Análisis</span><span>Informe final</span></div></div></div></div><div class="glass reveal"><div class="eyebrow">Presupuesto estimado</div><div class="budget">US$ 466,50</div><p>Financiamiento propio: conectividad, documentación, movilidad, equipo, nube y contingencia.</p></div></div>
+  </section>
+
+  <section class="slide" data-title="Aporte y límites" data-note="Muestre madurez científica: el proyecto tiene alcance. No pretende abarcar todos los diseños ni sustituir el criterio profesional. Su aporte es integrar el flujo clásico agrícola, hacerlo reproducible y preparar una base ampliable." data-time="1:20">
+    <div class="scene"><div class="eyebrow reveal">12 · Aporte esperado</div><h2 class="reveal">Innovar no es añadir efectos.<br>Es reducir la distancia entre <span class="accent">método y decisión</span>.</h2><div class="risk reveal"><div><b>APORTE</b><p>Flujo integrado y secuencial para experimentos agrícolas clásicos.</p></div><div><b>ALCANCE</b><p>DCA, DBCA, factoriales, diagnóstico, inferencia y reporte.</p></div><div><b>LÍMITE HONESTO</b><p>No sustituye el juicio estadístico ni cubre todos los diseños posibles.</p></div></div><div class="quote reveal" style="margin-top:48px">Acceso libre. Resultados reproducibles.<br><span class="accent">Decisiones mejor informadas.</span></div></div>
+  </section>
+
+  <section class="slide bg bg-field" data-title="Cierre" data-note="Cierre sin leer. Repita la frase central y haga una pausa. Después agradezca y abra las preguntas. Presione O para volver a cualquier escena si el jurado solicita una aclaración." data-time="0:40">
+    <div class="closing"><div class="eyebrow reveal">13 · Cierre</div><h2 class="reveal">Cada parcela cuenta.<br><span class="accent">Cada análisis decide.</span></h2><p class="reveal">appDoE propone convertir el diseño y análisis de experimentos agrícolas en un recorrido accesible, riguroso y verificable.</p><div class="identity reveal"><b>Yenireth del Carmen Rengel Tocuyo</b><span>Gracias · Preguntas del jurado</span></div></div>
+  </section>
+
+  <div class="counter"><span id="current">01</span> <small>/ 14</small></div>
+  <div class="controls"><button aria-label="Anterior" onclick="prev()">←</button><button aria-label="Siguiente" onclick="next()">→</button></div>
+  <div class="utility"><button onclick="toggleOverview()" title="Vista general (O)">O</button><button onclick="toggleNotes()" title="Notas (N)">N</button><button onclick="full()" title="Pantalla completa (F)">F</button></div>
+  <div class="hint">← → avanzar · F pantalla completa · N notas · O vista general</div>
+  <aside class="speaker" id="speaker"><h3 id="noteTitle"></h3><div class="time" id="noteTime"></div><p id="noteText"></p></aside>
+  <div class="overview" id="overview"></div>
+</main>
 <script>
-// Accordion
-function toggleAccordion(btn){
-  const body=btn.nextElementSibling;
-  const isOpen=body.classList.contains('open');
-  document.querySelectorAll('.accordion-body').forEach(b=>b.classList.remove('open'));
-  document.querySelectorAll('.accordion-header').forEach(h=>h.setAttribute('aria-expanded','false'));
-  if(!isOpen){body.classList.add('open');btn.setAttribute('aria-expanded','true')}
-}
-
-// Nav
-const navLinks=document.querySelectorAll('.sidebar nav a[data-target]');
-navLinks.forEach(link=>{
-  link.style.cursor='pointer';
-  link.addEventListener('click',e=>{
-    e.preventDefault();
-    const id=link.getAttribute('data-target');
-    const target=document.getElementById(id);
-    if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
-    document.querySelector('.sidebar').classList.remove('open');
-    history.replaceState(null,null,'#'+id);
-  });
-});
-const sections=document.querySelectorAll('.section');
-window.addEventListener('scroll',()=>{
-  let current='';
-  sections.forEach(s=>{if(scrollY>=s.offsetTop-120)current=s.getAttribute('id')});
-  navLinks.forEach(l=>{l.classList.remove('active');if(l.getAttribute('data-target')===current)l.classList.add('active')});
-});
-
-// Escape closes mobile sidebar
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelector('.sidebar').classList.remove('open')});
-
-// Load initial hash
-if(location.hash){const el=document.getElementById(location.hash.slice(1));if(el)setTimeout(()=>el.scrollIntoView(),100)}
-
-// ═══ QUIZ ═══
-const quizData=[
-  {q:"Un investigador quiere comparar 5 dosis de fertilizante en un campo con gradiente de fertilidad conocido. ¿Qué diseño debe usar?",
-   opts:["DCA","DBCA","Factorial","Cuadrado latino"],correct:1,
-   explain:"El gradiente de fertilidad es una fuente de variación conocida y controlable → se bloquea → DBCA."},
-  {q:"Shapiro-Wilk arroja W=0.934, p=0.219. ¿Qué concluimos?",
-   opts:["Los datos son normales","No hay evidencia suficiente para rechazar normalidad","Se confirma la hipótesis nula","Los residuos son perfectamente normales"],correct:1,
-   explain:"p>0.05 solo indica que la prueba no encontró evidencia suficiente para rechazar la normalidad. No demuestra que el supuesto sea verdadero."},
-  {q:"En un factorial 3×4 con 3 repeticiones, ¿cuántas unidades experimentales se necesitan?",
-   opts:["12","24","36","48"],correct:2,
-   explain:"3 × 4 × 3 = 36 unidades experimentales."},
-  {q:"¿Qué indica un F significativo en el ANAVA?",
-   opts:["Todos los tratamientos son diferentes","Al menos dos medias difieren","El mejor tratamiento está identificado","Los supuestos se cumplen"],correct:1,
-   explain:"F significativo solo indica que al menos dos medias difieren. No dice cuáles ni identifica el mejor."},
-  {q:"¿Cuál es la principal ventaja de Tukey sobre Duncan?",
-   opts:["Mayor potencia","Mayor control del error familywise","Más fácil de calcular","Funciona sin ANAVA"],correct:1,
-   explain:"Tukey controla más estrictamente el error Tipo I familywise, aunque Duncan tiene mayor potencia (sensibilidad)."},
-  {q:"Si se toman 5 muestras de la misma parcela, ¿son 5 repeticiones?",
-   opts:["Sí, son 5 repeticiones","No, son submuestras","Depende del cultivo","Solo si son aleatorias"],correct:1,
-   explain:"Son submuestras. Las repeticiones son unidades experimentales independientes que recibieron el mismo tratamiento."},
-  {q:"¿Qué supuesto evalúa la prueba de Durbin-Watson?",
-   opts:["Normalidad","Homogeneidad de varianzas","Independencia de errores","Aditividad"],correct:2,
-   explain:"Durbin-Watson detecta autocorrelación serial, evaluando la independencia de los errores."},
-  {q:"En un factorial, la interacción A×B es significativa. ¿Qué hacemos con los efectos principales?",
-   opts:["Se interpretan normalmente","No tiene sentido interpretarlos aisladamente","Se ignoran los factores","Se repite el experimento"],correct:1,
-   explain:"Con interacción significativa, el efecto de un factor depende del nivel del otro. Se analizan las combinaciones, no los factores por separado."},
-  {q:"¿Cuál es el principal hallazgo de Tanaka y Amaliah (2025) sobre paquetes R para DoE?",
-   opts:["Faltan paquetes estadísticos","Sobran paquetes pero están fragmentados","R no sirve para diseño experimental","Shiny es obsoleto"],correct:1,
-   explain:"El problema no es la falta de funciones, sino su fragmentación, desarrollo en silos y predominio de interfaces tipo «receta»."},
-  {q:"¿Cuál de estas NO es una razón válida para usar Kruskal-Wallis en lugar de ANAVA?",
-   opts:["Violación severa de normalidad","Heterocedasticidad grave no corregible","Es 'mejor' que el ANAVA","Datos ordinales por naturaleza"],correct:2,
-   explain:"Kruskal-Wallis no es 'mejor' — es una alternativa cuando el ANAVA no es aplicable. Si los supuestos se cumplen, el ANAVA tiene mayor potencia."},
-  {q:"¿Qué diferencia la validación numérica de la evaluación de usabilidad?",
-   opts:["Son lo mismo","La numérica verifica cálculos; la usabilidad evalúa la experiencia del usuario","La usabilidad es más importante","Solo se necesita una de las dos"],correct:1,
-   explain:"Validación numérica = ¿los resultados coinciden con R e InfoStat? Usabilidad = ¿el usuario entiende y usa bien la herramienta? Son complementarias."},
-  {q:"CM_Error = 0.45, media general = 6.20. ¿Cuál es el CV?",
-   opts:["7.26%","10.82%","3.62%","14.52%"],correct:1,
-   explain:"CV = (√0.45 / 6.20) × 100 = (0.6708 / 6.20) × 100 = 10.82%."}
-];
-
-let answered=0,correct=0;
-function buildQuiz(){
-  const area=document.getElementById('quiz-area');
-  area.innerHTML='';
-  quizData.forEach((q,i)=>{
-    let html=`<div class="quiz-container" id="quiz-${i}"><div class="quiz-q">${i+1}. ${q.q}</div><div class="quiz-options" id="opts-${i}">`;
-    q.opts.forEach((o,j)=>{html+=`<label id="lbl-${i}-${j}"><input type="radio" name="q${i}" value="${j}" onchange="checkAnswer(${i},${j})">${o}</label>`});
-    html+=`</div><div class="quiz-feedback" id="fb-${i}"></div></div>`;
-    area.innerHTML+=html;
-  });
-}
-function checkAnswer(qi,ai){
-  const q=quizData[qi];
-  const fb=document.getElementById('fb-'+qi);
-  const opts=document.querySelectorAll(`#opts-${qi} input`);
-  opts.forEach(o=>o.disabled=true);
-  document.getElementById(`lbl-${qi}-${q.correct}`).classList.add('correct');
-  if(ai===q.correct){fb.className='quiz-feedback show right';fb.textContent='✓ Correcto. '+q.explain;correct++}
-  else{document.getElementById(`lbl-${qi}-${ai}`).classList.add('incorrect');fb.className='quiz-feedback show wrong';fb.textContent='✗ Incorrecto. '+q.explain}
-  answered++;
-  if(answered===quizData.length){
-    const sc=document.getElementById('quiz-score');sc.style.display='block';
-    document.getElementById('score-display').textContent=correct+'/'+quizData.length;
-    const pct=Math.round(correct/quizData.length*100);
-    document.getElementById('score-msg').textContent=pct>=80?'Excelente dominio.':pct>=60?'Buen nivel, revisa los errores.':'Necesitas repasar. Vuelve a los módulos.';
-  }
-}
-function resetQuiz(){answered=0;correct=0;document.getElementById('quiz-score').style.display='none';buildQuiz()}
-buildQuiz();
-
-// ═══ CALCULADORAS ═══
-function calcGL(){
-  const tipo=document.getElementById('gl-tipo').value;
-  document.getElementById('gl-inputs').style.display=tipo==='fact'?'none':'block';
-  document.getElementById('gl-fact-inputs').style.display=tipo==='fact'?'block':'none';
-  let html='';
-  if(tipo==='dca'){
-    const t=+document.getElementById('gl-t').value,r=+document.getElementById('gl-r').value;
-    html=`GL Tratamientos: ${t-1} | GL Error: ${t*(r-1)} | GL Total: ${t*r-1} | UE totales: ${t*r}`;
-  }else if(tipo==='dbca'){
-    const t=+document.getElementById('gl-t').value,b=+document.getElementById('gl-r').value;
-    html=`GL Bloques: ${b-1} | GL Tratamientos: ${t-1} | GL Error: ${(b-1)*(t-1)} | GL Total: ${b*t-1} | UE totales: ${b*t}`;
-  }else{
-    const a=+document.getElementById('gl-a').value,b=+document.getElementById('gl-b').value,r=+document.getElementById('gl-r2').value;
-    html=`GL A: ${a-1} | GL B: ${b-1} | GL A×B: ${(a-1)*(b-1)} | GL Error: ${a*b*(r-1)} | GL Total: ${a*b*r-1} | UE totales: ${a*b*r}`;
-  }
-  document.getElementById('gl-result').textContent=html;
-}
-calcGL();
-function calcCV(){
-  const cme=+document.getElementById('cv-cme').value,m=+document.getElementById('cv-mean').value;
-  const cv=(Math.sqrt(cme)/m*100).toFixed(2);
-  let eval_='';if(cv<10)eval_='Buen control experimental';else if(cv<20)eval_='Aceptable';else if(cv<30)eval_='Moderadamente alto';else eval_='Alto — revisar manejo';
-  document.getElementById('cv-result').textContent=`CV = ${cv}% → ${eval_}`;
-}
-calcCV();
-function calcUE(){
-  const t=+document.getElementById('ue-t').value,r=+document.getElementById('ue-r').value;
-  document.getElementById('ue-result').textContent=`UE totales = ${t} × ${r} = ${t*r}`;
-}
-calcUE();
+  const slides=[...document.querySelectorAll('.slide')], currentEl=document.getElementById('current'), overview=document.getElementById('overview'); let index=0, startX=0;
+  function show(i){index=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,n)=>s.classList.toggle('active',n===index));currentEl.textContent=String(index+1).padStart(2,'0');document.documentElement.style.setProperty('--progress',((index+1)/slides.length*100)+'%');updateNotes();history.replaceState(null,'','#'+(index+1));}
+  function next(){show(index+1)} function prev(){show(index-1)} function go(i){show(i)}
+  function full(){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()}
+  function updateNotes(){const s=slides[index];document.getElementById('noteTitle').textContent=(index+1)+'. '+s.dataset.title;document.getElementById('noteTime').textContent='Tiempo sugerido: '+s.dataset.time;document.getElementById('noteText').textContent=s.dataset.note}
+  function toggleNotes(){document.getElementById('speaker').classList.toggle('open');updateNotes()}
+  function toggleOverview(){overview.classList.toggle('open')}
+  slides.forEach((s,i)=>{const b=document.createElement('button');b.className='thumb';b.innerHTML='<b>'+String(i+1).padStart(2,'0')+'</b><span>'+s.dataset.title+'</span>';b.onclick=()=>{show(i);toggleOverview()};overview.appendChild(b)});
+  document.querySelectorAll('.module').forEach(m=>{const toggle=()=>m.classList.toggle('open');m.addEventListener('click',toggle);m.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}})});
+  addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev()}if(e.key.toLowerCase()==='f')full();if(e.key.toLowerCase()==='n')toggleNotes();if(e.key.toLowerCase()==='o')toggleOverview();if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1);if(e.key==='Escape'){overview.classList.remove('open');document.getElementById('speaker').classList.remove('open')}});
+  addEventListener('touchstart',e=>startX=e.changedTouches[0].screenX,{passive:true});addEventListener('touchend',e=>{const d=e.changedTouches[0].screenX-startX;if(Math.abs(d)>60)(d<0?next():prev())},{passive:true});
+  const hash=parseInt(location.hash.slice(1));show(Number.isFinite(hash)?hash-1:0);
 </script>
 </body>
 </html>
